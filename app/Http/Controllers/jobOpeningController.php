@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobOpening;
 use Illuminate\Http\Request;
 
 class jobOpeningController extends Controller
@@ -11,6 +12,7 @@ class jobOpeningController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', jobOpening::class);
         return view('jobOpenings.index');
     }
 
@@ -19,31 +21,30 @@ class jobOpeningController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', jobOpening::class);
         return view('jobOpenings.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(JobOpening $jobOpening)
     {
-        //
+        return view('jobOpenings.show',[
+            'jobOpening' => $jobOpening
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(JobOpening $jobOpening)
     {
-        //
+        $this->authorize('update', $jobOpening);
+        return view('jobOpenings.edit',[
+            'jobOpening' => $jobOpening
+        ]);
     }
 
     /**

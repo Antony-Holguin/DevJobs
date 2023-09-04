@@ -11,21 +11,37 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('jobOpenings.index')" :active="request()->routeIs('jobOpenings.index')">
-                        {{ __('My vacancies') }}
-                    </x-nav-link>
-                </div>
+                @auth
 
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('jobOpenings.create')" :active="request()->routeIs('jobOpenings.create')">
-                        {{ __('Create Vacant') }}
-                    </x-nav-link>
-                </div>
+                    @can('create',App\Models\JobOpening::class)
+                        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <x-nav-link :href="route('jobOpenings.index')" :active="request()->routeIs('jobOpenings.index')">
+                                {{ __('My vacancies') }}
+                            </x-nav-link>
+                        </div>
+
+                        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <x-nav-link :href="route('jobOpenings.create')" :active="request()->routeIs('jobOpenings.create')">
+                                {{ __('Create Vacant') }}
+                            </x-nav-link>
+                        </div>
+                    @endcan
+                    
+                @endauth
+
+                
+
+                
             </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
+                @auth
+                    
+                    @can (auth()->user()->rol ===2)
+                        <a class="mr-4" href="{{route('notifications')}}">Notifications: <span class="bg-red-600 rounded-full text-white p-1 font-extrabold">{{Auth::user()->unreadNotifications->count()}}</a>
+                    @endcan
+                
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
@@ -56,6 +72,23 @@
                         </form>
                     </x-slot>
                 </x-dropdown>
+
+                @endauth
+
+                @guest
+                    
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link :href="route('login')">
+                            {{ __('Login') }}
+                        </x-nav-link>
+                    </div>
+
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link :href="route('register')" :active="request()->routeIs('jobOpenings.create')">
+                            {{ __('Register') }}
+                        </x-nav-link>
+                    </div>
+                @endguest
             </div>
 
             <!-- Hamburger -->
@@ -72,6 +105,9 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+        @auth
+            
+        
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('jobOpenings.index')" :active="request()->routeIs('jobOpenings.index')">
                 {{ __('My vacancies') }}
@@ -80,6 +116,14 @@
             <x-responsive-nav-link :href="route('jobOpenings.create')" :active="request()->routeIs('jobOpenings.create')">
                 {{ __('Create Vacant') }}
             </x-responsive-nav-link>
+
+            @if (auth()->user()->rol ===2)
+                <div class="flex gap-2 items-center p-3">
+                    
+                    <a  href="{{route('notifications')}}"><span class="bg-red-600 rounded-full text-white p-3 font-extrabold">{{Auth::user()->unreadNotifications->count()}}</a>
+                    <p>@choice('Notification|Notifications',Auth::user()->unreadNotifications->count()) </p>
+                </div>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -106,5 +150,20 @@
                 </form>
             </div>
         </div>
+
+        @endauth
+
+        @guest
+            <div class="pt-2 pb-3 space-y-1">
+                <x-responsive-nav-link :href="route('login')">
+                    {{ __('Login') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('register')">
+                    {{ __('Register') }}
+                </x-responsive-nav-link>
+            </div>
+
+        @endguest
     </div>
 </nav>
